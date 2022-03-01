@@ -171,7 +171,7 @@ PRODUCT_PACKAGES += \
 
 # Fingerprint sensor
 PRODUCT_PACKAGES += \
-    android.hardware.biometrics.fingerprint@2.1-service.xiaomi_msm8998 \
+    android.hardware.biometrics.fingerprint@2.1-service \
     move_fingerprint_data.sh
 
 # For config.fs
