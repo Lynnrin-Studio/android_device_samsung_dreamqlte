@@ -18,6 +18,9 @@
 
 set -e
 
+DEVICE=dreamqlte
+VENDOR=samsung
+
 # Load extract_utils and do some sanity checks
 MY_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "${MY_DIR}" ]]; then MY_DIR="${PWD}"; fi
@@ -59,21 +62,6 @@ fi
 
 function blob_fixup() {
     case "${1}" in
-    vendor/etc/init/vendor.xiaomi.hardware.mtdservice@1.2-service.rc)
-        sed -i '/group/ i\    user system' "${2}"
-        ;;
-    vendor/etc/permissions/qti_libpermissions.xml)
-        sed -i 's|name=\"android.hidl.manager-V1.0-java|name=\"android.hidl.manager@1.0-java|g' "${2}"
-        ;;
-    vendor/etc/permissions/qcrilhook.xml)
-        sed -i 's|/system/framework/qcrilhook.jar|/vendor/framework/qcrilhook.jar|g' "${2}"
-        ;;
-    vendor/lib/libFaceGrade.so)
-        patchelf --remove-needed "libandroid.so" "${2}"
-        ;;
-    vendor/lib/libarcsoft_beauty_shot.so)
-        patchelf --remove-needed "libandroid.so" "${2}"
-        ;;
     vendor/lib/libmmcamera2_stats_modules.so)
         patchelf --remove-needed "libandroid.so" "${2}"
         ;;
@@ -83,19 +71,10 @@ function blob_fixup() {
     esac
 }
 
-# Initialize the helper for common device
-setup_vendor "${DEVICE_COMMON}" "${VENDOR}" "${LINEAGE_ROOT}" true "${CLEAN_VENDOR}"
+# Initialize the helper
+setup_vendor "${DEVICE}" "${VENDOR}" "${LINEAGE_ROOT}" false "${CLEAN_VENDOR}"
 
 extract "${MY_DIR}/proprietary-files.txt" "${SRC}" \
         "${KANG}" --section "${SECTION}"
-
-if [ -s "${MY_DIR}/../${DEVICE}/proprietary-files.txt" ]; then
-    # Reinitialize the helper for device
-    source "${MY_DIR}/../${DEVICE}/extract-files.sh"
-    setup_vendor "${DEVICE}" "${VENDOR}" "${LINEAGE_ROOT}" false "${CLEAN_VENDOR}"
-
-    extract "${MY_DIR}/../${DEVICE}/proprietary-files.txt" "${SRC}" \
-            "${KANG}" --section "${SECTION}"
-fi
 
 "${MY_DIR}/setup-makefiles.sh"
