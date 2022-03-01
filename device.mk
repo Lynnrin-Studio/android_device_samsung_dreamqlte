@@ -395,4 +395,4 @@ PRODUCT_BOOT_JARS += \
     WfdCommon
 
 # Call the proprietary setup
-$(call inherit-product, vendor/xiaomi/msm8998-common/msm8998-common-vendor.mk)
+$(call inherit-product, vendor/samsung/dreamqlte/dreamqlte-vendor.mk)
